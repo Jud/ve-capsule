@@ -1,0 +1,65 @@
+[package]
+name = "ve-capsule"
+description = "secp256k1 segmented verifiable encryption (ec-segve-v1): hardware-custodiable recovery-key VE on the native curve."
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85.0"
+license = "Apache-2.0 OR MIT"
+authors = ["The ve-capsule authors"]
+repository = "https://github.com/sudo-wallet/sudo"
+
+[lib]
+
+[dependencies]
+# `expose-field` powers the batched affine chord kernel in `batch_affine`:
+# the screening scans do x-only point sums in raw field arithmetic at ~3x the
+# throughput of the projective pipeline (differentially pinned against it).
+k256 = { workspace = true, features = ["hash2curve", "expose-field"] }
+# `getrandom` exposes `OsRng` for the production `seal` / `keygen` entry points
+# (the VeBackend `seal` surface takes no rng, so it sources `OsRng` internally).
+rand_core = { workspace = true, features = ["getrandom"] }
+sha2 = { workspace = true }
+zeroize = { workspace = true }
+
+[dev-dependencies]
+# Ground-truth interop: the stripped-capsule signature verifier is tested against
+# real signatures from the quorum's FROST(secp256k1)-TR ciphersuite. Test-only —
+# the shipped library depends only on k256 + sha2 for the verifier.
+frost-core = { workspace = true }
+frost-secp256k1-tr = { workspace = true }
+rand = { workspace = true }
+static_assertions = "1.1"
+# BP++ differential oracle (MIT, unaudited — NEVER a runtime dependency): the
+# norm-argument fold math is cross-checked against the only pure-Rust k256
+# BP++ implementation by replaying its Merlin transcript (norm_arg.rs tests).
+bp-pp = "0.1.1"
+merlin = "3"
+
+[[bench]]
+name = "primitive_perf"
+harness = false
+
+[lints]
+workspace = true
+
+[workspace]
+
+[workspace.dependencies]
+k256 = { version = "0.13", features = ["arithmetic"] }
+rand_core = "0.6"
+sha2 = "0.10"
+zeroize = { version = "1.8", features = ["derive"] }
+rand = "0.8"
+frost-core = "3.0.0-rc.0"
+frost-secp256k1-tr = { version = "3.0.0-rc.0", features = ["serialization"] }
+
+[workspace.lints.rust]
+unsafe_code = "deny"
+missing_docs = "warn"
+
+[workspace.lints.clippy]
+pedantic = { level = "warn", priority = -1 }
+nursery = { level = "warn", priority = -1 }
+unwrap_used = "warn"
+expect_used = "warn"
+panic = "warn"

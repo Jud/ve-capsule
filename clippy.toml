@@ -1,0 +1,26 @@
+# Clippy configuration for sudo
+# https://doc.rust-lang.org/clippy/configuration.html
+
+# MSRV for lint suggestions
+msrv = "1.85.0"
+
+# Cognitive complexity threshold (default 25)
+cognitive-complexity-threshold = 20
+
+# Maximum lines per function (pedantic)
+too-many-lines-threshold = 100
+
+# Maximum arguments per function
+too-many-arguments-threshold = 6
+
+# Doc comment code block length
+doc-valid-idents = [
+    "MPC", "ECDSA", "PSBT", "BDK", "UniFFI", "FROST", "BIP32", "BIP39",
+    "BIP340", "BIP341", "BIP143", "ChillDKG", "SimplPedPop", "EncPedPop",
+    "CertEq", "Taproot", "P2TR", "P2WSH", "P2PKH", "P2WPKH", "secp256k1",
+    "DER", "CBOR", "ECDH", "HKDF", "SPAKE2", "RTS", "PAKE", "Schnorr",
+    "DKG", "DKLS23", "VSS", "OsRng",
+]
+
+# Allow certain patterns in tests
+allow-unwrap-in-tests = true
